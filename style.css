@@ -121,3 +121,30 @@ nav .on{text-shadow:0 0 10px var(--g)}nav .on img{box-shadow:0 0 12px var(--g)}
 .err{color:#ff8a7a;font-size:13px;text-align:center;min-height:16px}
 @media print{body{background:#fff!important;color:#000}body::before,header,nav,.cats,.chips,.rb,.cloudbox,.live,.modal{display:none!important}
  .rr,.stats div{background:#fff!important;color:#000!important;border:1px solid #999!important;box-shadow:none!important}.rr b,.stats b{color:#000!important}.vt{color:#000!important}#v-rep[hidden]{display:block}}
+
+/* ===== mobile fixes ===== */
+nav{z-index:8;background:#000}
+#app{padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+.ht{min-width:100px}
+h1{white-space:nowrap}
+.lbl{display:inline}
+#toast{position:fixed;left:12px;right:12px;bottom:100px;background:#2a0f0c;border:1px solid var(--red);color:#ffb3a8;padding:12px;border-radius:12px;z-index:20;display:none;font-size:13px;text-align:center}
+#toast.show{display:block}
+@media(max-width:520px){
+ header{gap:8px;padding:10px 12px}
+ header img{width:42px;height:42px}
+ h1{font-size:17px;letter-spacing:2px}
+ header small{display:none}
+ .btn{padding:9px 0;width:40px;text-align:center;font-size:16px}
+ .lbl{display:none}
+ .live{padding:8px 12px}
+ .stats{gap:6px}
+ .stats div{font-size:9px;letter-spacing:0;padding:10px 2px 8px}
+ .stats b{font-size:22px}
+ .cats button{min-width:0;font-size:14px;letter-spacing:1px}
+ .ccard{padding:12px}.ct h2{font-size:18px}.big{font-size:28px}
+ .all{font-size:13px;padding:12px 4px}
+ .pl .l{padding:8px;gap:8px}
+ .pl button{width:52px}.pl .pf{width:42px}
+ nav button{padding:6px;font-size:11px}nav img{width:26px;height:26px}nav i{font-size:22px;line-height:26px}
+}

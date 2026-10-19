@@ -9,10 +9,10 @@
 <div id="app">
 <header>
   <img src="icons/logo.png" alt="">
-  <div class="ht"><h1>LEGIONS FC</h1><small>Attendance · Admin (all categories)</small></div>
-  <button class="btn" id="inst" hidden>⬇ Install</button>
-  <button class="btn" id="exp">📤 Export</button>
-  <button class="btn red" id="add">＋ Player</button>
+  <div class="ht"><h1>LEGIONS FC</h1><small>Attendance Tracker</small></div>
+  <button class="btn" id="inst" hidden>⬇<span class="lbl"> Install</span></button>
+  <button class="btn" id="exp">📤<span class="lbl"> Export</span></button>
+  <button class="btn red" id="add">＋<span class="lbl"> Player</span></button>
 </header>
 <section class="live"><span class="dot"></span><b>Live</b><input type="date" id="date"></section>
 <section id="v-att">
@@ -52,6 +52,7 @@
 <div class="modal" id="mProf"><div class="card" id="prof"></div></div>
 <div class="modal" id="mLogin"><form class="card" id="fLogin"><img src="icons/logo.png" class="lg"><h2>LEGIONS FC</h2><small style="text-align:center">Coach Login</small>
   <input id="lem" type="email" placeholder="Email" required><input id="lpw" type="password" placeholder="Password" required><div id="lerr" class="err"></div><button class="gold">Login</button></form></div>
+<div id="toast"></div>
 <script src="app.js"></script>
 <script type="module" src="cloud.js"></script>
 </body></html>
