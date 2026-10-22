@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s);
 const KEY='legions_v1',CATS=['Junior','Senior'];
 let db=JSON.parse(localStorage.getItem(KEY)||'{"players":[],"rec":{}}');
 let cat='Junior',view='att',editId=null,photoData='';
-const cloudOn=()=>window.Cloud&&Cloud.on;
+let gotP=false;const cloudOn=()=>window.Cloud&&Cloud.on;
 const save=()=>{if(!cloudOn())localStorage.setItem(KEY,JSON.stringify(db))};
 const sync=()=>{if(cloudOn())Cloud.saveSession($('#date').value,cat,db.rec[rk()]||{})};
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
@@ -44,7 +44,7 @@ function renderAtt(){
    <button class="n ${v==='A'?'on':''}" data-m="${p.id}" data-v="A"><em>✕</em>NO</button></div>`};
   const f=ps.filter(p=>p.name.toLowerCase().includes(q));
   const sec=(t,k)=>{const a=f.filter(p=>(r[p.id]||'')===k);return a.length?`<div class="sec">— ${t} · ${a.length}</div>`+a.map(row).join(''):''};
-  $('#list').innerHTML=(sec('PRESENT','P')+sec('ABSENT','A')+sec('UNMARKED',''))||'<div class="empty">No players. "＋ Player" click pannunga.</div>';
+  $('#list').innerHTML=(sec('PRESENT','P')+sec('ABSENT','A')+sec('UNMARKED',''))||(cloudOn()&&!gotP?'<div class="empty">⏳ Cloud la irundhu players load aaguthu...<br><small>Login screen vandha login pannunga</small></div>':'<div class="empty">No players. "＋ Player" click pannunga.</div>');
   renderBday();
 }
 function renderHis(){
@@ -146,7 +146,7 @@ $('#csv').onclick=()=>{const ks=sessionsIn(cat),ps=plist(cat);
 $('#prt').onclick=()=>window.print();
 
 // ---- Cloud hooks ----
-window.App={setData(p,r){if(p)db.players=p;if(r)db.rec=r;render();checkBday()},setUser(e){$('#cuser').textContent=e?'☁ '+e:''}};
+window.App={setData(p,r){if(p){db.players=p;gotP=true}if(r)db.rec=r;render();checkBday()},setUser(e){$('#cuser').textContent=e?'☁ '+e:''}};
 $('#logout').onclick=()=>window.Cloud&&Cloud.logout();
 $('#upl').onclick=()=>ask('Indha device la irukkura pazhaya data-va cloud ku upload pannanuma?',()=>Cloud.uploadAll(JSON.parse(localStorage.getItem(KEY)||'{"players":[],"rec":{}}')));
 
