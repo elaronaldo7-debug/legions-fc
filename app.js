@@ -154,6 +154,9 @@ let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#in
 $('#inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('#inst').hidden=true};
 addEventListener('appinstalled',()=>$('#inst').hidden=true);
 
+const setZoom=z=>{document.body.style.zoom=z;localStorage.setItem('legions_zoom',z);document.querySelectorAll('#zs [data-z]').forEach(b=>b.classList.toggle('on',b.dataset.z===z))};
+$('#zs').onclick=e=>{const b=e.target.closest('[data-z]');if(b)setZoom(b.dataset.z)};
+setZoom(localStorage.getItem('legions_zoom')||'0.9');
 $('#bday').onclick=e=>{const w=e.target.closest('[data-wish]');if(w){const p=db.players.find(x=>x.id===w.dataset.wish);wa('🎂🎉 *Happy Birthday '+p.name+'!* 🎉🎂\nWishing you a great year ahead. – Legions FC ⚽');return}const c=e.target.closest('[data-prof]');if(c)profile(c.dataset.prof)};
 render();checkBday();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

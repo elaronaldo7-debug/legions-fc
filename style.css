@@ -146,3 +146,9 @@ input,select{padding:10px;font-size:14px}
 .bi{padding:8px 10px}.bi>span{font-size:22px}
 .lg{height:90px}
 #toast{bottom:80px}
+
+/* display size control */
+.zoombox{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+.zchips{display:flex;gap:6px}
+.zchips button{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--ln);background:#15130d;color:var(--g);font-size:12px;font-weight:700}
+.zchips .on{background:var(--g);color:#000;border-color:var(--g)}
