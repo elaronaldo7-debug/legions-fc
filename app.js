@@ -12,25 +12,39 @@ const fmt=d=>new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short'
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const logo='icons/logo.png';
 const plist=c=>db.players.filter(p=>p.cat===c).sort((a,b)=>a.name.localeCompare(b.name));
-const avatar=p=>p.photo?`<img class="ini" src="${p.photo}">`:`<div class="ini">${p.no?esc(p.no):esc(p.name[0]||'?').toUpperCase()}</div>`;
+const initials=n=>n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+const avatar=p=>p.photo?`<img class="ini" src="${p.photo}">`:`<div class="ini">${esc(initials(p.name))}</div>`;
+function bdInfo(p){if(!p.dob)return null;const t=new Date();t.setHours(0,0,0,0);const[y,m,d]=p.dob.split('-').map(Number);let n=new Date(t.getFullYear(),m-1,d);if(n<t)n=new Date(t.getFullYear()+1,m-1,d);return{days:Math.round((n-t)/864e5),age:n.getFullYear()-y}}
+function renderBday(){const l=db.players.map(p=>({p,b:bdInfo(p)})).filter(x=>x.b&&x.b.days<=7).sort((a,b)=>a.b.days-b.b.days);
+  $('#bday').hidden=!l.length;
+  $('#bday').innerHTML=l.map(({p,b})=>`<div class="bi" data-prof="${p.id}"><span>🎂</span><div><b>${esc(p.name)}</b><small>${b.days===0?'Today! Turns '+b.age+' 🎉':b.days===1?'Tomorrow · turns '+b.age:'In '+b.days+' days · turns '+b.age}</small></div>${b.days===0?`<button class="wish" data-wish="${p.id}">🎉 Wish</button>`:''}</div>`).join('')}
+function checkBday(){const t0=db.players.filter(p=>{const b=bdInfo(p);return b&&b.days===0}),t1=db.players.filter(p=>{const b=bdInfo(p);return b&&b.days===1});
+  if(!t0.length&&!t1.length)return;const k='bd_'+today();if(localStorage.getItem(k))return;localStorage.setItem(k,'1');
+  $('#alertBox').innerHTML=`<div class="ph"><div style="font-size:60px">🎂</div><h2>${t0.length?'Birthday Today!':'Birthday Tomorrow'}</h2></div>`+
+   t0.map(p=>`<div class="bi"><span>🎉</span><div><b>${esc(p.name)}</b><small>turns ${bdInfo(p).age} today</small></div></div>`).join('')+
+   t1.map(p=>`<div class="bi"><span>⏰</span><div><b>${esc(p.name)}</b><small>Tomorrow · turns ${bdInfo(p).age}</small></div></div>`).join('')+`<button class="gold" id="alOk">Super! 🎉</button>`;
+  $('#mAlert').classList.add('show');$('#alOk').onclick=()=>$('#mAlert').classList.remove('show')}
 
 function tabsHtml(){return CATS.map(c=>{const ps=plist(c),r=db.rec[rk($('#date').value,c)]||{};
   const P=ps.filter(p=>r[p.id]==='P').length,A=ps.filter(p=>r[p.id]==='A').length;
-  return`<button data-cat="${c}" class="${c===cat?'on':''}">${c==='Junior'?'⚽':'🛡️'} ${c.toUpperCase()}<small>${P}P · ${A}A · ${ps.length-P-A}?</small></button>`}).join('')}
-
+  return`<button data-cat="${c}" class="${c===cat?'on':''}">${c==='Junior'?'⚽':'🛡️'} ${c.toUpperCase()}<div class="chs"><span class="ch p">${P}P</span><span class="ch a">${A}A</span><span class="ch u">${ps.length-P-A}?</span></div></button>`}).join('')}
 function renderAtt(){
-  const ps=plist(cat),r=db.rec[rk()]||{},q=$('#q').value.toLowerCase();
-  const P=ps.filter(p=>r[p.id]==='P').length,A=ps.filter(p=>r[p.id]==='A').length,U=ps.length-P-A;
-  $('#sum').innerHTML=`<div class="p"><b>${P}</b>PRESENT</div><div class="a"><b>${A}</b>ABSENT</div><div class="u"><b>${U}</b>UNMARKED</div><div><b>${ps.length}</b>TOTAL</div>`;
+  const ps=plist(cat),r=db.rec[rk()]||{},q=$('#q').value.toLowerCase(),d=$('#date').value;
+  const tally=l=>{let P=0,A=0;l.forEach(p=>{const v=(db.rec[rk(d,p.cat)]||{})[p.id];if(v==='P')P++;else if(v==='A')A++});return{P,A,U:l.length-P-A,T:l.length}};
+  const g=tally(db.players),c=tally(ps);
+  const tiles=(x,cl)=>`<div class="p"><b>${x.P}</b>PRESENT</div><div class="a"><b>${x.A}</b>ABSENT</div><div class="u"><b>${x.U}</b>UNMARKED</div><div><b>${x.T}</b>TOTAL</div>`;
+  $('#sum').innerHTML=tiles(g);
   $('#tabs').innerHTML=tabsHtml();
-  $('#ccard').innerHTML=`<div class="ct"><img src="${logo}"><div><h2>${cat.toUpperCase()}</h2><p>${ps.length} players</p></div><div class="big">${P}<small>/${ps.length}</small><p style="font-size:12px;font-weight:400">Present today</p></div></div><div class="bar"><i style="width:${ps.length?P/ps.length*100:0}%"></i></div>`;
-  const row=p=>{const v=r[p.id]||'';return`<div class="pl ${v}"><div class="l">${avatar(p)}<b>${esc(p.name)}${p.no?' · #'+esc(p.no):''}</b></div>
+  $('#ccard').innerHTML=`<div class="ct"><div class="ci">${cat==='Junior'?'⚽':'🛡️'}</div><div><h2>${cat.toUpperCase()}</h2><p>${c.T} players</p></div><div class="big">${c.P}<small>/${c.T}</small><p>Present today</p></div></div><div class="bar"><i style="width:${c.T?c.P/c.T*100:0}%"></i></div><div class="cg">${tiles(c)}</div>`;
+  const row=p=>{const v=r[p.id]||'',b=bdInfo(p),sub=(p.no?'#'+esc(p.no):'')+(p.no&&p.pos?' · ':'')+esc(p.pos||'');
+   return`<div class="pl ${v}"><div class="l">${avatar(p)}<div class="nm"><b>${esc(p.name)}${b&&b.days===0?' 🎂':''}</b>${sub?`<span>${sub}</span>`:''}</div></div>
    <button class="pf" data-prof="${p.id}"><em>👤</em></button>
    <button class="y ${v==='P'?'on':''}" data-m="${p.id}" data-v="P"><em>✓</em>YES</button>
    <button class="n ${v==='A'?'on':''}" data-m="${p.id}" data-v="A"><em>✕</em>NO</button></div>`};
   const f=ps.filter(p=>p.name.toLowerCase().includes(q));
   const sec=(t,k)=>{const a=f.filter(p=>(r[p.id]||'')===k);return a.length?`<div class="sec">— ${t} · ${a.length}</div>`+a.map(row).join(''):''};
   $('#list').innerHTML=(sec('UNMARKED','')+sec('PRESENT','P')+sec('ABSENT','A'))||'<div class="empty">No players. "＋ Player" click pannunga.</div>';
+  renderBday();
 }
 function renderHis(){
   const ks=Object.keys(db.rec).filter(k=>Object.keys(db.rec[k]).length).sort().reverse();
@@ -74,7 +88,7 @@ $('#rst').onclick=()=>{if(confirm('Reset this session?'))setAll(null)};
 // add/edit
 function openAdd(p){editId=p?p.id:null;photoData=p?p.photo||'':'';
   $('#addT').textContent=p?'Edit Player':'Add Player';
-  $('#pn').value=p?p.name:'';$('#pno').value=p?p.no:'';$('#ppos').value=p?p.pos:'';$('#pcat').value=p?p.cat:cat;
+  $('#pn').value=p?p.name:'';$('#pno').value=p?p.no:'';$('#ppos').value=p?p.pos:'';$('#pdob').value=p?p.dob||'':'';$('#pcat').value=p?p.cat:cat;
   $('#pv').src=photoData||logo;$('#mAdd').classList.add('show')}
 $('#add').onclick=()=>openAdd();
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#mAdd').classList.remove('show'));
@@ -83,14 +97,15 @@ $('#photo').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Im
     c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,200,200);
     photoData=c.toDataURL('image/jpeg',.8);$('#pv').src=photoData};img.src=URL.createObjectURL(f)};
 $('#fAdd').onsubmit=e=>{e.preventDefault();
-  const o={name:$('#pn').value.trim(),no:$('#pno').value,pos:$('#ppos').value.trim(),cat:$('#pcat').value,photo:photoData};
+  const o={name:$('#pn').value.trim(),no:$('#pno').value,pos:$('#ppos').value.trim(),cat:$('#pcat').value,photo:photoData,dob:$('#pdob').value};
   let pl;if(editId){pl=db.players.find(p=>p.id===editId);Object.assign(pl,o)}else{pl={id:'p'+Date.now(),...o};db.players.push(pl)}
   if(cloudOn())Cloud.savePlayer(pl);
   save();$('#mAdd').classList.remove('show');cat=o.cat;render()};
 
 // profile
-function profile(id){const p=db.players.find(x=>x.id===id),s=stats(p);
-  $('#prof').innerHTML=`<div class="ph"><img src="${p.photo||logo}"><h2>${esc(p.name)}</h2><span>${p.no?'#'+esc(p.no)+' · ':''}${esc(p.pos||'')} · ${p.cat}</span></div>
+function profile(id){const p=db.players.find(x=>x.id===id),s=stats(p),b=bdInfo(p),age=b?(b.days===0?b.age:b.age-1):0;
+  $('#prof').innerHTML=`<div class="ph"><img src="${p.photo||logo}"><h2>${esc(p.name)}</h2><span>${p.no?'#'+esc(p.no)+' · ':''}${esc(p.pos||'')} · ${p.cat}</span>
+  ${b?`<div class="dob">🎂 ${fmt(p.dob)} · ${age} yrs<br><small>${b.days===0?'🎉 Happy Birthday today!':'Birthday in '+b.days+' days'}</small></div>`:'<div class="dob none">Birthday not added · Edit to add</div>'}</div>
   <div class="pct">${s.pct}%</div><div class="stats" style="grid-template-columns:repeat(3,1fr)"><div><b>${s.P+s.A}</b>SESSIONS</div><div class="p"><b>${s.P}</b>PRESENT</div><div class="a"><b>${s.A}</b>ABSENT</div></div>
   <div class="hist">${s.h.slice().reverse().map(([d,v])=>`<i class="${v}">${fmt(d)} · ${v==='P'?'✔':'✘'}</i>`).join('')||'<span class="empty">No records yet</span>'}</div>
   <div class="row2"><button class="ghost" id="pe">Edit</button><button class="ghost" id="pd">Delete</button><button class="gold" id="pc">Close</button></div>`;
@@ -130,7 +145,7 @@ $('#csv').onclick=()=>{const ks=sessionsIn(cat),ps=plist(cat);
 $('#prt').onclick=()=>window.print();
 
 // ---- Cloud hooks ----
-window.App={setData(p,r){if(p)db.players=p;if(r)db.rec=r;render()},setUser(e){$('#cuser').textContent=e?'☁ '+e:''}};
+window.App={setData(p,r){if(p)db.players=p;if(r)db.rec=r;render();checkBday()},setUser(e){$('#cuser').textContent=e?'☁ '+e:''}};
 $('#logout').onclick=()=>window.Cloud&&Cloud.logout();
 $('#upl').onclick=()=>{if(confirm('Indha device la irukkura pazhaya data-va cloud ku upload pannanuma?'))Cloud.uploadAll(JSON.parse(localStorage.getItem(KEY)||'{"players":[],"rec":{}}'))};
 
@@ -139,5 +154,6 @@ let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#in
 $('#inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('#inst').hidden=true};
 addEventListener('appinstalled',()=>$('#inst').hidden=true);
 
-render();
+$('#bday').onclick=e=>{const w=e.target.closest('[data-wish]');if(w){const p=db.players.find(x=>x.id===w.dataset.wish);wa('🎂🎉 *Happy Birthday '+p.name+'!* 🎉🎂\nWishing you a great year ahead. – Legions FC ⚽');return}const c=e.target.closest('[data-prof]');if(c)profile(c.dataset.prof)};
+render();checkBday();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

@@ -9,13 +9,13 @@
 <div id="app">
 <header>
   <img src="icons/logo.png" alt="">
-  <div class="ht"><h1>LEGIONS FC</h1><small>Attendance Tracker</small></div>
-  <button class="btn" id="inst" hidden>⬇<span class="lbl"> Install</span></button>
+  <div class="ht"><h1>LEGIONS FC</h1><small>Attendance · Coach</small></div>
   <button class="btn" id="exp">📤<span class="lbl"> Export</span></button>
   <button class="btn red" id="add">＋<span class="lbl"> Player</span></button>
 </header>
-<section class="live"><span class="dot"></span><b>Live</b><input type="date" id="date"></section>
+<section class="live"><span class="dot"></span><b>Live</b><input type="date" id="date"><button class="btn" id="inst" hidden>⬇ Install</button></section>
 <section id="v-att">
+  <div id="bday" hidden></div>
   <div class="stats" id="sum"></div>
   <div class="search"><span>🔍</span><input id="q" placeholder="Search players..."></div>
   <div class="cats" id="tabs"></div>
@@ -46,10 +46,12 @@
   <label class="pic"><img id="pv" src="icons/logo.png"><span>Tap to add photo</span><input type="file" id="photo" accept="image/*" hidden></label>
   <input id="pn" placeholder="Player name" required>
   <div class="row2"><input id="pno" type="number" placeholder="Jersey #"><input id="ppos" placeholder="Position"></div>
+  <small class="fl">🎂 Date of birth</small><input id="pdob" type="date">
   <select id="pcat"><option>Junior</option><option>Senior</option></select>
   <div class="row2"><button type="button" class="ghost" data-close>Cancel</button><button class="gold">Save</button></div>
 </form></div>
 <div class="modal" id="mProf"><div class="card" id="prof"></div></div>
+<div class="modal" id="mAlert"><div class="card" id="alertBox"></div></div>
 <div class="modal" id="mLogin"><form class="card" id="fLogin"><img src="icons/logo.png" class="lg"><h2>LEGIONS FC</h2><small style="text-align:center">Coach Login</small>
   <input id="lem" type="email" placeholder="Email" required><input id="lpw" type="password" placeholder="Password" required><div id="lerr" class="err"></div><button class="gold">Login</button></form></div>
 <div id="toast"></div>
