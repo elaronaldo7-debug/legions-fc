@@ -151,8 +151,13 @@ $('#logout').onclick=()=>window.Cloud&&Cloud.logout();
 $('#upl').onclick=()=>ask('Indha device la irukkura pazhaya data-va cloud ku upload pannanuma?',()=>Cloud.uploadAll(JSON.parse(localStorage.getItem(KEY)||'{"players":[],"rec":{}}')));
 
 // ---- Install (desktop / mobile) ----
-let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false});
-$('#inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('#inst').hidden=true};
+let dp;const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+$('#inst').hidden=!!standalone;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+$('#inst').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;return}
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  $('#alertBox').innerHTML=`<div class="ph"><div style="font-size:42px">📲</div><h2>Install app</h2></div><p style="text-align:center;color:#cfc6a8;line-height:1.7">${ios?'Safari → Share ⬆ → <b>Add to Home Screen</b>':'Browser menu <b>⋮</b> → <b>Install app</b> / <b>Add to Home screen</b>'}</p><button class="gold" id="alOk">OK</button>`;
+  $('#mAlert').classList.add('show');$('#alOk').onclick=()=>$('#mAlert').classList.remove('show')};
 addEventListener('appinstalled',()=>$('#inst').hidden=true);
 
 function ask(msg,yes){$('#alertBox').innerHTML=`<div class="ph"><div style="font-size:42px">⚠️</div><h2>${esc(msg)}</h2></div><div class="row2"><button class="ghost" id="aNo">Cancel</button><button class="gold" id="aYes">OK</button></div>`;
