@@ -1,7 +1,7 @@
 :root{--g:#d4af37;--g2:#f5d76e;--ln:#3a3015;--red:#c0392b;--mut:#8d856b;--c:#15130d}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 body{background:radial-gradient(circle at top,#1c1608,#090909 55%) fixed;color:#eee;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh}
-body::before{content:"";position:fixed;inset:0;background:url(icons/logo.png) center 50%/min(360px,75vw) auto no-repeat;opacity:.05;pointer-events:none}
+body::before{content:"";position:fixed;inset:0;background:url(logo.png) center 50%/min(360px,75vw) auto no-repeat;opacity:.05;pointer-events:none}
 #app{position:relative;z-index:1;max-width:560px;margin:auto;padding:0 12px calc(120px + env(safe-area-inset-bottom))}
 button{font:inherit;cursor:pointer;color:inherit}
 input,select{background:#100e08;border:1px solid var(--ln);color:#fff;padding:12px;border-radius:12px;font-size:15px;width:100%;outline:0}

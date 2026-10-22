@@ -3,12 +3,12 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Legions FC Attendance</title>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#000000">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="app">
 <header>
-  <img class="logo" src="icons/logo.png" alt="">
+  <img class="logo" src="logo.png" alt="">
   <div class="ht"><h1>LEGIONS FC</h1><small>Attendance · Coach</small></div>
   <button class="btn" id="exp">📤<span class="lbl"> Export</span></button>
   <button class="btn red" id="add">＋<span class="lbl"> Player</span></button>
@@ -37,14 +37,14 @@
 </section>
 </div>
 <nav id="nav">
-  <button data-v="att" class="on"><img class="logo" src="icons/logo.png"><span>Attendance</span></button>
+  <button data-v="att" class="on"><img class="logo" src="logo.png"><span>Attendance</span></button>
   <button data-v="his"><i>📅</i><span>History</span></button>
   <button data-v="rep"><i>📊</i><span>Report</span></button>
 </nav>
 
 <div class="modal" id="mAdd"><form class="card" id="fAdd">
   <h2 id="addT">Add Player</h2>
-  <label class="pic"><img id="pv" class="logo lgo" src="icons/logo.png"><span>Tap to add photo</span><input type="file" id="photo" accept="image/*" hidden></label>
+  <label class="pic"><img id="pv" class="logo lgo" src="logo.png"><span>Tap to add photo</span><input type="file" id="photo" accept="image/*" hidden></label>
   <input id="pn" placeholder="Player name" required>
   <div class="row2"><input id="pno" type="number" placeholder="Jersey #"><input id="ppos" placeholder="Position"></div>
   <small class="fl">🎂 Date of birth</small><input id="pdob" type="date">
@@ -53,7 +53,7 @@
 </form></div>
 <div class="modal" id="mProf"><div class="card" id="prof"></div></div>
 <div class="modal" id="mAlert"><div class="card" id="alertBox"></div></div>
-<div class="modal" id="mLogin"><form class="card" id="fLogin"><img src="icons/logo.png" class="lg logo"><h2>LEGIONS FC</h2><small style="text-align:center">Coach Login</small>
+<div class="modal" id="mLogin"><form class="card" id="fLogin"><img src="logo.png" class="lg logo"><h2>LEGIONS FC</h2><small style="text-align:center">Coach Login</small>
   <input id="lem" type="email" placeholder="Email" required><input id="lpw" type="password" placeholder="Password" required><div id="lerr" class="err"></div><button class="gold">Login</button></form></div>
 <div id="toast"></div>
 <script src="app.js"></script>
