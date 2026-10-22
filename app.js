@@ -167,7 +167,7 @@ document.querySelectorAll('img.logo').forEach(i=>i.src=LOGO);
 const setZoom=z=>{document.body.style.zoom=z;localStorage.setItem('legions_zoom',z);document.querySelectorAll('#zs [data-z]').forEach(b=>b.classList.toggle('on',b.dataset.z===z))};
 $('#zs').onclick=e=>{const b=e.target.closest('[data-z]');if(b)setZoom(b.dataset.z)};
 setZoom(localStorage.getItem('legions_zoom')||'0.9');
-function wishMsg(n){return `🎉 Happy Birthday, ${n}! 🎂
+function wishMsg(n){n=n.trim().replace(/\s+/g,' ');if(n===n.toUpperCase())n=n.toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase());return `🎉 Happy Birthday, ${n}! 🎂
 
 Wishing you a wonderful birthday and a year filled with happiness, good health, success, and memorable achievements. May you continue to grow, learn, and excel in everything you do. Have a fantastic day and a bright future ahead.
 
