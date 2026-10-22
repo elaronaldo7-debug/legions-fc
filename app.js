@@ -22,7 +22,7 @@ function renderBday(){const l=db.players.map(p=>({p,b:bdInfo(p)})).filter(x=>x.b
 function checkBday(){const t0=db.players.filter(p=>{const b=bdInfo(p);return b&&b.days===0}),t1=db.players.filter(p=>{const b=bdInfo(p);return b&&b.days===1});
   if(!t0.length&&!t1.length)return;const k='bd_'+today();if(localStorage.getItem(k))return;localStorage.setItem(k,'1');
   $('#alertBox').innerHTML=`<div class="ph"><div style="font-size:60px">🎂</div><h2>${t0.length?'Birthday Today!':'Birthday Tomorrow'}</h2></div>`+
-   t0.map(p=>`<div class="bi"><span>🎉</span><div><b>${esc(p.name)}</b><small>turns ${bdInfo(p).age} today</small></div></div>`).join('')+
+   t0.map(p=>`<div class="bi"><span>🎉</span><div><b>${esc(p.name)}</b><small>turns ${bdInfo(p).age} today</small></div><button class="wish" data-wish="${p.id}">🎉 Wish</button></div>`).join('')+
    t1.map(p=>`<div class="bi"><span>⏰</span><div><b>${esc(p.name)}</b><small>Tomorrow · turns ${bdInfo(p).age}</small></div></div>`).join('')+`<button class="gold" id="alOk">Super! 🎉</button>`;
   $('#mAlert').classList.add('show');$('#alOk').onclick=()=>$('#mAlert').classList.remove('show')}
 
@@ -89,7 +89,7 @@ $('#rst').onclick=()=>ask('Indha session-a reset pannanuma?',()=>setAll(null));
 // add/edit
 function openAdd(p){editId=p?p.id:null;photoData=p?p.photo||'':'';
   $('#addT').textContent=p?'Edit Player':'Add Player';
-  $('#pn').value=p?p.name:'';$('#pno').value=p?p.no:'';$('#ppos').value=p?p.pos:'';$('#pdob').value=p?p.dob||'':'';$('#pcat').value=p?p.cat:cat;
+  $('#pn').value=p?p.name:'';$('#pno').value=p?p.no:'';$('#ppos').value=p?p.pos:'';$('#pdob').value=p?p.dob||'':'';$('#pph').value=p?p.phone||'':'';$('#pcat').value=p?p.cat:cat;
   $('#pv').src=photoData||logo;$('#pv').classList.toggle('lgo',!photoData);$('#mAdd').classList.add('show')}
 $('#add').onclick=()=>openAdd();
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$('#mAdd').classList.remove('show'));
@@ -98,7 +98,7 @@ $('#photo').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Im
     c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,200,200);
     photoData=c.toDataURL('image/jpeg',.8);$('#pv').src=photoData;$('#pv').classList.remove('lgo')};img.src=URL.createObjectURL(f)};
 $('#fAdd').onsubmit=e=>{e.preventDefault();
-  const o={name:$('#pn').value.trim(),no:$('#pno').value,pos:$('#ppos').value.trim(),cat:$('#pcat').value,photo:photoData,dob:$('#pdob').value};
+  const o={name:$('#pn').value.trim(),no:$('#pno').value,pos:$('#ppos').value.trim(),cat:$('#pcat').value,photo:photoData,dob:$('#pdob').value,phone:$('#pph').value.trim()};
   let pl;if(editId){pl=db.players.find(p=>p.id===editId);Object.assign(pl,o)}else{pl={id:'p'+Date.now(),...o};db.players.push(pl)}
   if(cloudOn())Cloud.savePlayer(pl);
   save();$('#mAdd').classList.remove('show');cat=o.cat;render()};
@@ -167,6 +167,14 @@ document.querySelectorAll('img.logo').forEach(i=>i.src=LOGO);
 const setZoom=z=>{document.body.style.zoom=z;localStorage.setItem('legions_zoom',z);document.querySelectorAll('#zs [data-z]').forEach(b=>b.classList.toggle('on',b.dataset.z===z))};
 $('#zs').onclick=e=>{const b=e.target.closest('[data-z]');if(b)setZoom(b.dataset.z)};
 setZoom(localStorage.getItem('legions_zoom')||'0.9');
-$('#bday').onclick=e=>{const w=e.target.closest('[data-wish]');if(w){const p=db.players.find(x=>x.id===w.dataset.wish);wa('🎂🎉 *Happy Birthday '+p.name+'!* 🎉🎂\nWishing you a great year ahead. – Legions FC ⚽');return}const c=e.target.closest('[data-prof]');if(c)profile(c.dataset.prof)};
+function wishMsg(n){return `🎉 Happy Birthday, ${n}! 🎂
+
+Wishing you a wonderful birthday and a year filled with happiness, good health, success, and memorable achievements. May you continue to grow, learn, and excel in everything you do. Have a fantastic day and a bright future ahead.
+
+Best Wishes,
+LEGIONS FC ⚽✨`}
+function wishP(p){const d=(p.phone||'').replace(/\D/g,''),num=d.length===10?'91'+d:d;window.open('https://wa.me/'+num+'?text='+encodeURIComponent(wishMsg(p.name)),'_blank')}
+$('#alertBox').onclick=e=>{const w=e.target.closest('[data-wish]');if(w)wishP(db.players.find(x=>x.id===w.dataset.wish))};
+$('#bday').onclick=e=>{const w=e.target.closest('[data-wish]');if(w){const p=db.players.find(x=>x.id===w.dataset.wish);wishP(p);return}const c=e.target.closest('[data-prof]');if(c)profile(c.dataset.prof)};
 render();checkBday();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
