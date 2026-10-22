@@ -87,7 +87,7 @@ nav .on{color:var(--g2);text-shadow:0 0 10px var(--g)}
 .ghost{background:none;border:1px solid var(--g);color:var(--g);padding:12px;border-radius:12px;font-weight:700}
 .pic{text-align:center;color:var(--mut);font-size:12px;cursor:pointer}
 .pic img,.ph img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--g);display:block;margin:0 auto 4px;box-shadow:0 0 22px #d4af37aa}
-.pic img[src$="logo.png"],.ph img[src$="logo.png"]{object-fit:contain;padding:10px;background:#000}
+.lgo{object-fit:contain;padding:10px;background:#000}
 .ph{text-align:center}.ph h2{margin-top:8px}.ph>span{color:var(--mut)}
 .dob{margin-top:10px;padding:8px 14px;border:1px dashed var(--g);border-radius:10px;color:var(--g2);display:inline-block}
 .dob small{color:#e8dca0}.dob.none{border-color:var(--ln);color:var(--mut);font-size:13px}
@@ -152,3 +152,5 @@ input,select{padding:10px;font-size:14px}
 .zchips{display:flex;gap:6px}
 .zchips button{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--ln);background:#15130d;color:var(--g);font-size:12px;font-weight:700}
 .zchips .on{background:var(--g);color:#000;border-color:var(--g)}
+
+#toast.ok{background:#1d1807;border-color:var(--g);color:var(--g2)}

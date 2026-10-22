@@ -6,7 +6,7 @@ const $=s=>document.querySelector(s);
 if(!cfg.apiKey.startsWith('PASTE')){
   const app=initializeApp(cfg),auth=getAuth(app),fs=initializeFirestore(app,{localCache:persistentLocalCache()});
   let un=[];
-  const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),7000)};
+  const toast=(m,ok)=>{const t=$('#toast');t.textContent=m;t.classList.toggle('ok',!!ok);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),7000)};
   setPersistence(auth,browserLocalPersistence).catch(()=>{});
   window.Cloud={on:true,
     savePlayer:p=>setDoc(doc(fs,'players',p.id),p),
@@ -15,7 +15,7 @@ if(!cfg.apiKey.startsWith('PASTE')){
     logout:()=>signOut(auth),
     uploadAll:async d=>{for(const p of d.players)await setDoc(doc(fs,'players',p.id),p);
       for(const k in d.rec){const[date,cat]=k.split('|');if(Object.keys(d.rec[k]).length)await setDoc(doc(fs,'sessions',date+'_'+cat),{date,cat,marks:d.rec[k]})}
-      alert('Uploaded ✔')}};
+      toast('✔ Uploaded',true)}};
   onAuthStateChanged(auth,u=>{
     un.forEach(f=>f());un=[];
     if(!u){$('#mLogin').classList.add('show');App.setUser('');return}
